@@ -10,6 +10,7 @@ dependencies:
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go get github.com/mattn/goveralls
 
   override:
     - make
@@ -43,22 +44,7 @@ test:
     - lcov --directory . --capture --output-file coverage.info
     - lcov --remove coverage.info 'tests/*' 'src/soter/openssl/*' '/usr/*' --output-file coverage.info
     - lcov --list coverage.info
-#    - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info
-    - build_with_boringssl/tests/soter_test
-    - build_with_boringssl/tests/themis_test
-    - build/tests/themispp_test
-    - sudo /sbin/ldconfig
-    - build/tests/pythemis_test.sh
-    - sudo build/tests/rubythemis_test.sh
-    - build/tests/phpthemis_test.sh
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $GOROOT/bin/go test -v $GOTHEMIS_IMPORT/...
-    - build/tests/node.sh
-    # - tests/check_ios_test.sh `tests/start_ios_test.sh`
-    # start Android emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
-        background: true
-    # wait for it to have booted
-    - circle-android wait-for-boot
-    # run Android tests
-    - ./gradlew --info -Pboringssl_path=$HOME/boringssl connectedAndroidTest
-
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go test -v $GOTHEMIS_IMPORT/...
+    
+  post:
+    - '! [ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
