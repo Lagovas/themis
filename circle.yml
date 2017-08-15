@@ -42,4 +42,4 @@ test:
     - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go test -v $GOTHEMIS_IMPORT/...
     
   post:
-    - '! [ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && export PATH=$GOROOT/bin:$PATH && export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
+    - '! [ -z "$CI_PULL_REQUEST" ] && ! [ -z "$COVERALLS_TOKEN" ] && export PATH=$GOROOT/bin:$PATH && export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
