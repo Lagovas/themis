@@ -2,6 +2,9 @@ machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+    GOROOT: $HOME/go 
+    PATH: $GOROOT/bin:$PATH 
+    GOPATH: $HOME/gopath
 
 ## Customize dependencies
 dependencies:
@@ -10,7 +13,7 @@ dependencies:
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go get github.com/mattn/goveralls
+    - go get github.com/mattn/goveralls
 
   override:
     - make
@@ -30,7 +33,7 @@ dependencies:
 ## Customize test commands
 test:
   override:
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go test -v $GOTHEMIS_IMPORT/...
+    - go test -v $GOTHEMIS_IMPORT/...
     
   post:
-    - '! [ -z "$CI_PULL_REQUEST" ] && ! [ -z "$COVERALLS_TOKEN" ] && export GOROOT=$HOME/go && export PATH=$GOROOT/bin:$PATH && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
+    - '! [ -z "$CI_PULL_REQUEST" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
